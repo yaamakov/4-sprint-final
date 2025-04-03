@@ -14,27 +14,28 @@ import (
 
 const (
 	StepLength = 0.65 // длина шага в метрах
+	mInKm      = 1000 // метров в километре
 )
 
 func parsePackage(data string) (int, time.Duration, error) {
 	parts := strings.Split(data, ",")
 
 	if len(parts) != 2 {
-		return 0, 0, errors.New("неверный формат данных")
+		return 0, 0, errors.New("invalid data format")
 	}
 
 	steps, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return 0, 0, errors.New("ошибка при конвертации количества шагов: " + err.Error())
+		return 0, 0, fmt.Errorf("step count convertation failed: %w", err)
 	}
 
 	if steps <= 0 {
-		return 0, 0, errors.New("количество шагов должно быть больше 0")
+		return 0, 0, errors.New("negative number of steps")
 	}
 
 	duration, err := time.ParseDuration(parts[1])
 	if err != nil {
-		return 0, 0, errors.New("ошибка при конвертации времени: " + err.Error())
+		return 0, 0, fmt.Errorf("time convertation failed: %w", err)
 	}
 
 	return steps, duration, nil
@@ -59,7 +60,7 @@ func DayActionInfo(data string, weight, height float64) string {
 
 	distanceMeters := float64(steps) * StepLength
 
-	distanceKilometers := distanceMeters / 1000.0
+	distanceKilometers := distanceMeters / mInKm
 
 	calories := spentcalories.WalkingSpentCalories(steps, weight, height, duration)
 

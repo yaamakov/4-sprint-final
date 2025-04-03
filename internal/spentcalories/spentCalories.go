@@ -21,19 +21,19 @@ func parseTraining(data string) (int, string, time.Duration, error) {
 	parts := strings.Split(data, ",")
 
 	if len(parts) != 3 {
-		return 0, "", 0, errors.New("неверный формат данных")
+		return 0, "", 0, errors.New("invalid data format")
 	}
 
 	steps, err := strconv.Atoi(parts[0])
 	if err != nil {
-		return 0, "", 0, errors.New("ошибка при конвертации количества шагов: " + err.Error())
+		return 0, "", 0, fmt.Errorf("step count convertation failed: %w", err)
 	}
 
 	activityType := parts[1]
 
 	duration, err := time.ParseDuration(parts[2])
 	if err != nil {
-		return 0, "", 0, errors.New("ошибка при конвертации времени: " + err.Error())
+		return 0, "", 0, fmt.Errorf("time convertation failed: %w", err)
 	}
 
 	return steps, activityType, duration, nil
@@ -76,7 +76,7 @@ func TrainingInfo(data string, weight, height float64) string {
 	steps, trainingType, duration, err := parseTraining(data)
 
 	if err != nil {
-		return fmt.Sprintf("ошибка при обработке данных: %v", err)
+		return fmt.Sprintf("data processing error: %v", err)
 	}
 
 	var dist, speed, calories float64
